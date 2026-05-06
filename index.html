@@ -49,7 +49,7 @@
                 .select('*');
 
             if (error) {
-                document.getElementById('data-list').innerHTML = "Lỗi: " + error.message;
+                document.getElementById('data-list').innerHTML = "Lỗi chi tiết: " + JSON.stringify(error);
                 return;
             }
 
