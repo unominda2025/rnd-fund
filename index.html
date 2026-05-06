@@ -1,7 +1,76 @@
-// 1. Ghép Project ID của bạn vào link
-const SUPABASE_URL = 'https://hhxsiutlbvtynkwsbkr.supabase.co'; 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quỹ Team 2026</title>
+    <!-- Thư viện Supabase bắt buộc phải có -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #0f172a, #1e293b); 
+            color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px; width: 90%; max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h1 { text-align: center; color: #38bdf8; font-size: 1.5rem; }
+        .row { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .amount { color: #2dd4bf; font-weight: bold; font-size: 1.2rem; }
+        .content { font-size: 1rem; }
+        .category { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <div class="glass-card">
+        <h1>📊 TỔNG QUỸ TEAM</h1>
+        <div id="data-list">Đang tải dữ liệu...</div>
+    </div>
 
-// 2. Dán cái dãy "Publishable key" (màu xanh ở hình trước đó) vào đây
-const SUPABASE_KEY = 'sb_publishable_7AkJeXIE1bper10em-E_wA__Eb2Y...'; 
+    <script>
+        // Thông tin lấy từ hình ảnh của bạn
+        const SUPABASE_URL = 'https://hhxsiutlbvtynkwsbkr.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_7AkJeXIE1bper10em-E_wA__Eb2Y...'; // Bạn nhớ copy đúng dãy đầy đủ nhé
 
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadData() {
+            const { data, error } = await _supabase
+                .from('fund_data')
+                .select('*');
+
+            if (error) {
+                document.getElementById('data-list').innerHTML = "Lỗi: " + error.message;
+                return;
+            }
+
+            const list = document.getElementById('data-list');
+            if (data.length === 0) {
+                list.innerHTML = "Chưa có dữ liệu nào.";
+                return;
+            }
+
+            list.innerHTML = data.map(item => `
+                <div class="row">
+                    <div>
+                        <div class="content">${item.content || 'Không có nội dung'}</div>
+                        <div class="category">${item.category || 'Chung'}</div>
+                    </div>
+                    <div class="amount">${Number(item.amount).toLocaleString()}đ</div>
+                </div>
+            `).join('');
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
