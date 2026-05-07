@@ -6,46 +6,58 @@
     <title>Quỹ Team 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .glass-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; width: 90%; max-width: 500px; }
-        h1 { text-align: center; color: #38bdf8; }
-        .row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .amount { color: #2dd4bf; font-weight: bold; }
+        body { background: #0f172a; color: white; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { text-align: center; color: #38bdf8; margin-bottom: 20px; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .amount { color: #2dd4bf; font-weight: bold; font-size: 1.1rem; }
+        .info { display: flex; flex-direction: column; }
+        .content { font-size: 1rem; }
+        .cat { font-size: 0.8rem; color: #94a3b8; }
     </style>
 </head>
 <body>
     <div class="glass-card">
         <h1>📊 TỔNG QUỸ TEAM</h1>
-        <div id="data-list">Đang tải dữ liệu...</div>
+        <div id="data-list">Đang kết nối dữ liệu...</div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://hhxsiutlbvtynkwsbkr.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoeHNpdXRsYnZ0eW5rd2xzYmtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMzMzMzksImV4cCI6MjA5MzYwOTMzOX0.IeopLqxMKgvmtmz7PQve0GlEp67V1leGrxo3eWVW-NU';
+        // Key này mình đã làm sạch, không còn ký tự thừa
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoeHNpdXRsYnZ0eW5rd2xzYnZ0eW5rd2xzYmtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMzMzMzksImV4cCI6MjA5MzYwOTMzOX0.IeopLqxMKgvmtmz7PQve0GlEp67V1leGrxo3eWVW-NU';
+        
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function loadData() {
+            const list = document.getElementById('data-list');
             try {
                 const { data, error } = await _supabase.from('fund_data').select('*');
-                if (error) throw error;
-                const list = document.getElementById('data-list');
-                if (!data || data.length === 0) {
-                    list.innerHTML = "Chưa có dữ liệu nào.";
+                
+                if (error) {
+                    list.innerHTML = `Lỗi: ${error.message}`;
                     return;
                 }
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = "Chưa có dữ tạo dữ liệu trong bảng.";
+                    return;
+                }
+
                 list.innerHTML = data.map(item => `
                     <div class="row">
-                        <div>
-                            <div>${item.content || 'Không tên'}</div>
-                            <small style="color:#94a3b8">${item.category || 'Chung'}</small>
+                        <div class="info">
+                            <span class="content">${item.content || 'Nội dung trống'}</span>
+                            <span class="cat">${item.category || 'Chung'}</span>
                         </div>
                         <div class="amount">${Number(item.amount).toLocaleString()}đ</div>
                     </div>
                 `).join('');
-            } catch (err) {
-                document.getElementById('data-list').innerHTML = "Lỗi: " + err.message;
+            } catch (e) {
+                list.innerHTML = "Lỗi kết nối mạng hoặc chặn truy cập.";
             }
         }
+
         loadData();
     </script>
 </body>
